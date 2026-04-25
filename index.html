@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开放朋友圈：所谓“垃圾日常”，只是分发失败的残骸</title>
+    <meta name="description" content="互联网曾经给过普通人一个承诺：你可以说话。探讨开放朋友圈的分发逻辑。">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <main class="container">
+        <article id="content" class="markdown-body">
+            <!-- Loading state -->
+            <div class="loading">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 Published via GitHub Pages</p>
+    </footer>
+
+    <script>
+        async function loadContent() {
+            try {
+                const response = await fetch('content.md');
+                const text = await response.text();
+                
+                // Configure marked to handle line breaks and other options
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true
+                });
+
+                document.getElementById('content').innerHTML = marked.parse(text);
+                
+                // Add staggered animation to paragraphs
+                const elements = document.querySelectorAll('.markdown-body > *');
+                elements.forEach((el, index) => {
+                    el.style.setProperty('--delay', `${index * 0.05}s`);
+                    el.classList.add('fade-in-up');
+                });
+            } catch (error) {
+                console.error('Error loading markdown:', error);
+                document.getElementById('content').innerHTML = '<p>内容加载失败，请刷新重试。</p>';
+            }
+        }
+
+        // Progress bar logic
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        };
+
+        window.addEventListener('DOMContentLoaded', loadContent);
+    </script>
+</body>
+</html>
